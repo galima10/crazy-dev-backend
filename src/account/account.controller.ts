@@ -1,6 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
 import { AccountService } from './account.service';
-import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 
 @Controller('accounts')
@@ -10,6 +9,11 @@ export class AccountController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.accountService.findOne(id);
+  }
+
+  @Get(':id/reservations')
+  findReservations(@Param('id') id: string) {
+    return this.accountService.findReservations(id);
   }
 
   @Patch(':id')

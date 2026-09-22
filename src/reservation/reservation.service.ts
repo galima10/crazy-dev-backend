@@ -97,6 +97,34 @@ export class ReservationService {
     return response.map((reservation) => this.toResponse(reservation));
   }
 
+  async findAllByAccount(accountId: string) {
+    const response = await this.zen.dbWithoutAuth().reservation.findMany({
+      where: { reservedById: accountId },
+      select: {
+        id: true,
+        createdAt: true,
+        journeyId: true,
+        journey: {
+          select: {
+            startDate: true,
+            endDate: true,
+            startCity: true,
+            endCity: true,
+            totalPlaces: true,
+          },
+        },
+        reservedById: true,
+        reservedBy: {
+          select: {
+            username: true,
+            name: true,
+          },
+        },
+      },
+    });
+    return response.map((reservation) => this.toResponse(reservation));
+  }
+
   async findOne(id: string) {
     const response = await this.zen.dbWithoutAuth().reservation.findFirstOrThrow({
       where: { id },

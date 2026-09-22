@@ -1,4 +1,15 @@
+import "account"
+import "reservation"
+
 model Journey {
-  id String @id @default(uuid())
-  
+  id           String        @id @default(uuid())
+  startDate    DateTime      @db.DateTime(0) @map("start_date")
+  endDate      DateTime      @db.DateTime(0) @map("end_date")
+  startCity    String        @map("start_city")
+  endCity      String        @map("end_city")
+  totalPlaces  Decimal       @db.Decimal(15, 6)
+  createdBy    String        @map("created_by")
+  account      Account       @relation(fields: [createdBy], references: [id])
+  reservations Reservation[]
+  createdAt    DateTime      @default(now()) @db.DateTime(0) @map("created_at")
 }

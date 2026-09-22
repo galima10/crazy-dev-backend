@@ -5,12 +5,182 @@
 
 /* eslint-disable */
 
-import { type SchemaDef } from "@zenstackhq/schema";
+import { type SchemaDef, type AttributeApplication, type FieldDefault, ExpressionUtils } from "@zenstackhq/schema";
 export class SchemaType implements SchemaDef {
     provider = {
         type: "mysql"
     } as const;
-    models = {} as const;
+    models = {
+        Account: {
+            name: "Account",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("uuid") }] }] as readonly AttributeApplication[],
+                    default: ExpressionUtils.call("uuid") as FieldDefault
+                },
+                username: {
+                    name: "username",
+                    type: "String"
+                },
+                name: {
+                    name: "name",
+                    type: "String",
+                    optional: true
+                },
+                password: {
+                    name: "password",
+                    type: "String"
+                },
+                description: {
+                    name: "description",
+                    type: "String",
+                    optional: true
+                },
+                journeys: {
+                    name: "journeys",
+                    type: "Journey",
+                    array: true,
+                    relation: { opposite: "account" }
+                },
+                reservations: {
+                    name: "reservations",
+                    type: "Reservation",
+                    array: true,
+                    relation: { opposite: "account" }
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }, { name: "@db.DateTime", args: [{ name: "x", value: ExpressionUtils.literal(0) }] }, { name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("created_at") }] }] as readonly AttributeApplication[],
+                    default: ExpressionUtils.call("now") as FieldDefault
+                }
+            },
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" }
+            }
+        },
+        Journey: {
+            name: "Journey",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("uuid") }] }] as readonly AttributeApplication[],
+                    default: ExpressionUtils.call("uuid") as FieldDefault
+                },
+                startDate: {
+                    name: "startDate",
+                    type: "DateTime",
+                    attributes: [{ name: "@db.DateTime", args: [{ name: "x", value: ExpressionUtils.literal(0) }] }, { name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("start_date") }] }] as readonly AttributeApplication[]
+                },
+                endDate: {
+                    name: "endDate",
+                    type: "DateTime",
+                    attributes: [{ name: "@db.DateTime", args: [{ name: "x", value: ExpressionUtils.literal(0) }] }, { name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("end_date") }] }] as readonly AttributeApplication[]
+                },
+                startCity: {
+                    name: "startCity",
+                    type: "String",
+                    attributes: [{ name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("start_city") }] }] as readonly AttributeApplication[]
+                },
+                endCity: {
+                    name: "endCity",
+                    type: "String",
+                    attributes: [{ name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("end_city") }] }] as readonly AttributeApplication[]
+                },
+                totalPlaces: {
+                    name: "totalPlaces",
+                    type: "Decimal",
+                    attributes: [{ name: "@db.Decimal", args: [{ name: "p", value: ExpressionUtils.literal(15) }, { name: "s", value: ExpressionUtils.literal(6) }] }] as readonly AttributeApplication[]
+                },
+                createdBy: {
+                    name: "createdBy",
+                    type: "String",
+                    attributes: [{ name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("created_by") }] }] as readonly AttributeApplication[],
+                    foreignKeyFor: [
+                        "account"
+                    ] as readonly string[]
+                },
+                account: {
+                    name: "account",
+                    type: "Account",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("createdBy")]) }, { name: "references", value: ExpressionUtils.array("String", [ExpressionUtils.field("id")]) }] }] as readonly AttributeApplication[],
+                    relation: { opposite: "journeys", fields: ["createdBy"], references: ["id"] }
+                },
+                reservations: {
+                    name: "reservations",
+                    type: "Reservation",
+                    array: true,
+                    relation: { opposite: "journey" }
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }, { name: "@db.DateTime", args: [{ name: "x", value: ExpressionUtils.literal(0) }] }, { name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("created_at") }] }] as readonly AttributeApplication[],
+                    default: ExpressionUtils.call("now") as FieldDefault
+                }
+            },
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" }
+            }
+        },
+        Reservation: {
+            name: "Reservation",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("uuid") }] }] as readonly AttributeApplication[],
+                    default: ExpressionUtils.call("uuid") as FieldDefault
+                },
+                journeyId: {
+                    name: "journeyId",
+                    type: "String",
+                    attributes: [{ name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("journey_id") }] }] as readonly AttributeApplication[],
+                    foreignKeyFor: [
+                        "journey"
+                    ] as readonly string[]
+                },
+                accountId: {
+                    name: "accountId",
+                    type: "String",
+                    attributes: [{ name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("account_id") }] }] as readonly AttributeApplication[],
+                    foreignKeyFor: [
+                        "account"
+                    ] as readonly string[]
+                },
+                journey: {
+                    name: "journey",
+                    type: "Journey",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("journeyId")]) }, { name: "references", value: ExpressionUtils.array("String", [ExpressionUtils.field("id")]) }] }] as readonly AttributeApplication[],
+                    relation: { opposite: "reservations", fields: ["journeyId"], references: ["id"] }
+                },
+                account: {
+                    name: "account",
+                    type: "Account",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("accountId")]) }, { name: "references", value: ExpressionUtils.array("String", [ExpressionUtils.field("id")]) }] }] as readonly AttributeApplication[],
+                    relation: { opposite: "reservations", fields: ["accountId"], references: ["id"] }
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }, { name: "@db.DateTime", args: [{ name: "x", value: ExpressionUtils.literal(0) }] }, { name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("created_at") }] }] as readonly AttributeApplication[],
+                    default: ExpressionUtils.call("now") as FieldDefault
+                }
+            },
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" }
+            }
+        }
+    } as const;
     plugins = {};
 }
 export const schema = new SchemaType();

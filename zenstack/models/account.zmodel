@@ -1,9 +1,15 @@
-model Account {
-  id          String   @id @default(uuid())
-  username    String
-  name        String?
-  password    String
-  description String?
+import "journey"
+import "reservation"
 
-  createdAt   DateTime @default(now()) @db.Timestamptz(0) @map("created_at")
+model Account {
+  id           String        @id @default(uuid())
+  username     String
+  name         String?
+  password     String
+  description  String?
+
+  journeys     Journey[]
+  reservations Reservation[]
+
+  createdAt    DateTime      @default(now()) @db.DateTime(0) @map("created_at")
 }

@@ -1,4 +1,13 @@
+import "journey"
+import "account"
+
 model Reservation {
-  id String @id @default(uuid())
-  
+  id        String   @id @default(uuid())
+  journeyId String   @map("journey_id")
+  accountId String   @map("account_id")
+
+  journey   Journey  @relation(fields: [journeyId], references: [id])
+  account   Account  @relation(fields: [accountId], references: [id])
+
+  createdAt DateTime @default(now()) @db.DateTime(0) @map("created_at")
 }

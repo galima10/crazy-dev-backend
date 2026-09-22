@@ -1,5 +1,0 @@
-import { type SchemaType as $Schema } from "./schema.js";
-import type { ModelResult as $ModelResult } from "@zenstackhq/orm";
-export type Account = $ModelResult<$Schema, "Account">;
-export type Journey = $ModelResult<$Schema, "Journey">;
-export type Reservation = $ModelResult<$Schema, "Reservation">;

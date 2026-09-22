@@ -5,7 +5,6 @@ import { PolicyPlugin } from '@zenstackhq/plugin-policy';
 import { schema } from 'zenstack/schema';
 
 import { MysqlDialect } from '@zenstackhq/orm/dialects/mysql';
-// Callback API on purpose — see createMysqlPool() below.
 import { createPool } from 'mysql2';
 
 const logger = new Logger('ZenStackService');

@@ -3,7 +3,7 @@ import { JourneyService } from './journey.service';
 import { CreateJourneyDto } from './dto/create-journey.dto';
 import { UpdateJourneyDto } from './dto/update-journey.dto';
 
-@Controller('journey')
+@Controller('journeys')
 export class JourneyController {
   constructor(private readonly journeyService: JourneyService) {}
 

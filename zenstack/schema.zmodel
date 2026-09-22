@@ -1,0 +1,8 @@
+datasource db {
+    provider = "mysql"
+    url = env("DATABASE_URL")
+}
+
+plugin policy {
+    provider = '@zenstackhq/plugin-policy'
+}

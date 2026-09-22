@@ -8,8 +8,8 @@ model Journey {
   startCity    String        @map("start_city")
   endCity      String        @map("end_city")
   totalPlaces  Decimal       @db.Decimal(15, 6)
-  createdBy    String        @map("created_by")
-  account      Account       @relation(fields: [createdBy], references: [id])
+  createdById  String        @map("created_by_id")
+  createdBy    Account       @relation(fields: [createdById], references: [id])
   reservations Reservation[]
   createdAt    DateTime      @default(now()) @db.DateTime(0) @map("created_at")
 }

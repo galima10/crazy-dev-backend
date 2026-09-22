@@ -1,0 +1,9 @@
+model Account {
+  id          String   @id @default(uuid())
+  username    String
+  name        String?
+  password    String
+  description String?
+
+  createdAt   DateTime @default(now()) @db.Timestamptz(0) @map("created_at")
+}

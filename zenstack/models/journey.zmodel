@@ -1,0 +1,4 @@
+model Journey {
+  id String @id @default(uuid())
+  
+}

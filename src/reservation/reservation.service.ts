@@ -40,7 +40,7 @@ export class ReservationService {
     };
   }
   async create(createReservationDto: CreateReservationDto) {
-    const response = await this.zen.db().reservation.create({
+    const response = await this.zen.dbWithoutAuth().reservation.create({
       data: {
         journeyId: createReservationDto.journeyId,
         reservedById: createReservationDto.reservedById,
@@ -71,7 +71,7 @@ export class ReservationService {
   }
 
   async findAll() {
-    const response = await this.zen.db().reservation.findMany({
+    const response = await this.zen.dbWithoutAuth().reservation.findMany({
       select: {
         id: true,
         createdAt: true,
@@ -98,7 +98,7 @@ export class ReservationService {
   }
 
   async findOne(id: string) {
-    const response = await this.zen.db().reservation.findFirstOrThrow({
+    const response = await this.zen.dbWithoutAuth().reservation.findFirstOrThrow({
       where: { id },
       select: {
         id: true,
@@ -126,6 +126,6 @@ export class ReservationService {
   }
 
   async remove(id: string) {
-    return this.zen.db().reservation.delete({ where: { id } });
+    return this.zen.dbWithoutAuth().reservation.delete({ where: { id } });
   }
 }

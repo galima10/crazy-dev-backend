@@ -1,36 +1,53 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 
 import { ZenStackClient } from '@zenstackhq/orm';
 import { PolicyPlugin } from '@zenstackhq/plugin-policy';
 import { schema } from 'zenstack/schema';
 
 import { MysqlDialect } from '@zenstackhq/orm/dialects/mysql';
-import { createPool } from 'mysql2/promise';
+// Callback API on purpose — see createMysqlPool() below.
+import { createPool } from 'mysql2';
+
+const logger = new Logger('ZenStackService');
+
+function createMysqlPool() {
+  const url = process.env.DATABASE_URL;
+  if (!url) {
+    throw new Error(
+      'DATABASE_URL is not set. Make sure .env is loaded before the app boots.',
+    );
+  }
+  const pool = createPool({ uri: url, timezone: 'Z' });
+  pool.on('error', (err) => logger.error('MySQL pool error', err));
+
+  return pool;
+}
 
 @Injectable()
-export class ZenStackService {
-  // Raw client — no policy enforcement, for internal/system operations
+export class ZenStackService implements OnModuleDestroy {
+  private readonly pool = createMysqlPool();
+
   readonly system = new ZenStackClient(schema, {
-    dialect: new MysqlDialect({
-      pool: createPool({
-        uri: process.env.DATABASE_URL,
-      }),
-    }),
+    dialect: new MysqlDialect({ pool: this.pool }),
   });
 
-  // Default policy-scoped client.
-  // Raw SQL is rejected so an accidental $queryRaw cannot silently bypass policy.
   private base = this.system.$use(new PolicyPlugin());
 
-  // Opt-in variant that additionally permits raw SQL.
-  // Policy still enforces all model CRUD.
   private rawAllowed = this.system.$use(
     new PolicyPlugin({
       dangerouslyAllowRawSql: true,
     }),
   );
 
-  db(user?: AuthContext) {
+  async onModuleDestroy() {
+    await new Promise<void>((resolve) => this.pool.end(() => resolve()));
+  }
+
+  dbWithoutAuth() {
+    return this.system;
+  }
+
+  db(user: AuthContext) {
     return this.base.$setAuth(user as never);
   }
 

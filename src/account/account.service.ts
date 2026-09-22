@@ -19,13 +19,13 @@ export class AccountService {
 
   async findOne(id: string) {
     const response = await this.zen
-      .db()
+      .dbWithoutAuth()
       .account.findFirstOrThrow({ where: { id } });
     return this.toResponse(response);
   }
 
   async update(id: string, updateAccountDto: UpdateAccountDto) {
-    const response = await this.zen.db().account.update({
+    const response = await this.zen.dbWithoutAuth().account.update({
       where: { id },
       data: {
         name: updateAccountDto.name,
@@ -36,6 +36,6 @@ export class AccountService {
   }
 
   async remove(id: string) {
-    return await this.zen.db().account.delete({ where: { id } });
+    return await this.zen.dbWithoutAuth().account.delete({ where: { id } });
   }
 }

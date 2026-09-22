@@ -30,7 +30,7 @@ export class JourneyService {
     };
   }
   async create(createJourneyDto: CreateJourneyDto) {
-    const response = await this.zen.db().journey.create({
+    const response = await this.zen.dbWithoutAuth().journey.create({
       data: {
         createdById: createJourneyDto.createdById,
         startDate: new Date(createJourneyDto.startDate),
@@ -61,7 +61,7 @@ export class JourneyService {
   }
 
   async findAll() {
-    const response = await this.zen.db().journey.findMany({
+    const response = await this.zen.dbWithoutAuth().journey.findMany({
       select: {
         id: true,
         createdById: true,
@@ -83,7 +83,7 @@ export class JourneyService {
   }
 
   async findOne(id: string) {
-    const response = await this.zen.db().journey.findFirstOrThrow({
+    const response = await this.zen.dbWithoutAuth().journey.findFirstOrThrow({
       where: { id },
       select: {
         id: true,
@@ -106,6 +106,6 @@ export class JourneyService {
   }
 
   async remove(id: string) {
-    return this.zen.db().journey.delete({ where: { id } });
+    return this.zen.dbWithoutAuth().journey.delete({ where: { id } });
   }
 }

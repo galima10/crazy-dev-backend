@@ -29,7 +29,7 @@ export const toReservationResponse = (
       endDate: m.journey.endDate.toDateString(),
       startCity: m.journey.startCity,
       endCity: m.journey.endCity,
-      totalPlaces: m.journey.totalPlaces.toNumber(),
+      totalPlaces: m.journey.totalPlaces,
     },
     reservedBy: {
       username: m.reservedBy.username,

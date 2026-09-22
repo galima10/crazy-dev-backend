@@ -19,5 +19,5 @@ export class CreateJourneyDto {
   totalPlaces: number;
 
   @IsUUID()
-  createdBy: string;
+  createdById: string;
 }

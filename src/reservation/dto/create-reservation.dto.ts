@@ -5,5 +5,5 @@ export class CreateReservationDto {
   journeyId: string;
 
   @IsUUID()
-  accountId: string;
+  reservedById: string;
 }

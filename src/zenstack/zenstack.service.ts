@@ -30,7 +30,7 @@ export class ZenStackService {
     }),
   );
 
-  db(user: AuthContext) {
+  db(user?: AuthContext) {
     return this.base.$setAuth(user as never);
   }
 
@@ -53,14 +53,5 @@ export class ZenStackService {
  */
 export interface AuthContext {
   id: string;
-
-  accountId?: string;
-
-  role?: string;
-
-  organizationId?: string;
-
-  permsAll?: string[];
-
-  permsOrg?: string[];
+  username?: string;
 }

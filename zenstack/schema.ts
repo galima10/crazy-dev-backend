@@ -23,7 +23,9 @@ export class SchemaType implements SchemaDef {
                 },
                 username: {
                     name: "username",
-                    type: "String"
+                    type: "String",
+                    unique: true,
+                    attributes: [{ name: "@unique" }] as readonly AttributeApplication[]
                 },
                 name: {
                     name: "name",
@@ -43,13 +45,13 @@ export class SchemaType implements SchemaDef {
                     name: "journeys",
                     type: "Journey",
                     array: true,
-                    relation: { opposite: "account" }
+                    relation: { opposite: "createdBy" }
                 },
                 reservations: {
                     name: "reservations",
                     type: "Reservation",
                     array: true,
-                    relation: { opposite: "account" }
+                    relation: { opposite: "reservedBy" }
                 },
                 createdAt: {
                     name: "createdAt",
@@ -60,7 +62,8 @@ export class SchemaType implements SchemaDef {
             },
             idFields: ["id"],
             uniqueFields: {
-                id: { type: "String" }
+                id: { type: "String" },
+                username: { type: "String" }
             }
         },
         Journey: {
@@ -95,22 +98,22 @@ export class SchemaType implements SchemaDef {
                 },
                 totalPlaces: {
                     name: "totalPlaces",
-                    type: "Decimal",
-                    attributes: [{ name: "@db.Decimal", args: [{ name: "p", value: ExpressionUtils.literal(15) }, { name: "s", value: ExpressionUtils.literal(6) }] }] as readonly AttributeApplication[]
+                    type: "Int",
+                    attributes: [{ name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("total_places") }] }] as readonly AttributeApplication[]
+                },
+                createdById: {
+                    name: "createdById",
+                    type: "String",
+                    attributes: [{ name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("created_by_id") }] }] as readonly AttributeApplication[],
+                    foreignKeyFor: [
+                        "createdBy"
+                    ] as readonly string[]
                 },
                 createdBy: {
                     name: "createdBy",
-                    type: "String",
-                    attributes: [{ name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("created_by") }] }] as readonly AttributeApplication[],
-                    foreignKeyFor: [
-                        "account"
-                    ] as readonly string[]
-                },
-                account: {
-                    name: "account",
                     type: "Account",
-                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("createdBy")]) }, { name: "references", value: ExpressionUtils.array("String", [ExpressionUtils.field("id")]) }] }] as readonly AttributeApplication[],
-                    relation: { opposite: "journeys", fields: ["createdBy"], references: ["id"] }
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("createdById")]) }, { name: "references", value: ExpressionUtils.array("String", [ExpressionUtils.field("id")]) }] }] as readonly AttributeApplication[],
+                    relation: { opposite: "journeys", fields: ["createdById"], references: ["id"] }
                 },
                 reservations: {
                     name: "reservations",
@@ -148,12 +151,12 @@ export class SchemaType implements SchemaDef {
                         "journey"
                     ] as readonly string[]
                 },
-                accountId: {
-                    name: "accountId",
+                reservedById: {
+                    name: "reservedById",
                     type: "String",
-                    attributes: [{ name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("account_id") }] }] as readonly AttributeApplication[],
+                    attributes: [{ name: "@map", args: [{ name: "name", value: ExpressionUtils.literal("reserved_by_id") }] }] as readonly AttributeApplication[],
                     foreignKeyFor: [
-                        "account"
+                        "reservedBy"
                     ] as readonly string[]
                 },
                 journey: {
@@ -162,11 +165,11 @@ export class SchemaType implements SchemaDef {
                     attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("journeyId")]) }, { name: "references", value: ExpressionUtils.array("String", [ExpressionUtils.field("id")]) }] }] as readonly AttributeApplication[],
                     relation: { opposite: "reservations", fields: ["journeyId"], references: ["id"] }
                 },
-                account: {
-                    name: "account",
+                reservedBy: {
+                    name: "reservedBy",
                     type: "Account",
-                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("accountId")]) }, { name: "references", value: ExpressionUtils.array("String", [ExpressionUtils.field("id")]) }] }] as readonly AttributeApplication[],
-                    relation: { opposite: "reservations", fields: ["accountId"], references: ["id"] }
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("reservedById")]) }, { name: "references", value: ExpressionUtils.array("String", [ExpressionUtils.field("id")]) }] }] as readonly AttributeApplication[],
+                    relation: { opposite: "reservations", fields: ["reservedById"], references: ["id"] }
                 },
                 createdAt: {
                     name: "createdAt",
@@ -175,9 +178,13 @@ export class SchemaType implements SchemaDef {
                     default: ExpressionUtils.call("now") as FieldDefault
                 }
             },
+            attributes: [
+                { name: "@@unique", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("journeyId"), ExpressionUtils.field("reservedById")]) }] }
+            ] as readonly AttributeApplication[],
             idFields: ["id"],
             uniqueFields: {
-                id: { type: "String" }
+                id: { type: "String" },
+                journeyId_reservedById: { journeyId: { type: "String" }, reservedById: { type: "String" } }
             }
         }
     } as const;

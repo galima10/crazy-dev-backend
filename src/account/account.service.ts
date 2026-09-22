@@ -1,26 +1,41 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
+import { ZenStackService } from '@/zenstack/zenstack.service';
+import { AccountResponseDto } from './dto/account-response.dto';
+import { Account } from 'zenstack/models';
 
 @Injectable()
 export class AccountService {
-  create(createAccountDto: CreateAccountDto) {
-    return 'This action adds a new account';
+  constructor(private zen: ZenStackService) {}
+
+  private toResponse(account: Account): AccountResponseDto {
+    return {
+      username: account.username,
+      name: account.name,
+      description: account.description,
+      createdAt: account.createdAt.toISOString(),
+    };
   }
 
-  findAll() {
-    return `This action returns all account`;
+  async findOne(id: string) {
+    const response = await this.zen
+      .db()
+      .account.findFirstOrThrow({ where: { id } });
+    return this.toResponse(response);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} account`;
+  async update(id: string, updateAccountDto: UpdateAccountDto) {
+    const response = await this.zen.db().account.update({
+      where: { id },
+      data: {
+        name: updateAccountDto.name,
+        description: updateAccountDto.description,
+      },
+    });
+    return this.toResponse(response);
   }
 
-  update(id: number, updateAccountDto: UpdateAccountDto) {
-    return `This action updates a #${id} account`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} account`;
+  async remove(id: string) {
+    return await this.zen.db().account.delete({ where: { id } });
   }
 }

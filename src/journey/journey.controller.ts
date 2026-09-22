@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { JourneyService } from './journey.service';
 import { CreateJourneyDto } from './dto/create-journey.dto';
-import { UpdateJourneyDto } from './dto/update-journey.dto';
 
 @Controller('journeys')
 export class JourneyController {
@@ -19,16 +18,11 @@ export class JourneyController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.journeyService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateJourneyDto: UpdateJourneyDto) {
-    return this.journeyService.update(+id, updateJourneyDto);
+    return this.journeyService.findOne(id);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.journeyService.remove(+id);
+    return this.journeyService.remove(id);
   }
 }

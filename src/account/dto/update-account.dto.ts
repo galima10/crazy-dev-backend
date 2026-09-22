@@ -1,4 +1,10 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateAccountDto } from './create-account.dto';
+import { IsString, MaxLength } from 'class-validator';
 
-export class UpdateAccountDto extends PartialType(CreateAccountDto) {}
+export class UpdateAccountDto {
+  @IsString()
+  @MaxLength(255)
+  name: string | null;
+
+  @IsString()
+  description: string | null;
+}

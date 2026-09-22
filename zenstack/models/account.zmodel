@@ -3,7 +3,7 @@ import "reservation"
 
 model Account {
   id           String        @id @default(uuid())
-  username     String
+  username     String        @unique
   name         String?
   password     String
   description  String?

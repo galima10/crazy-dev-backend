@@ -10,4 +10,6 @@ model Reservation {
   account   Account  @relation(fields: [accountId], references: [id])
 
   createdAt DateTime @default(now()) @db.DateTime(0) @map("created_at")
+
+  @@unique([journeyId, accountId])
 }
